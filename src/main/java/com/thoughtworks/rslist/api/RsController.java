@@ -39,6 +39,10 @@ public class RsController {
 
     @PutMapping("/rs/event/{index}")
     public void putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
-        rsList.set(index-1, rsEvent);
+        if (rsEvent.getEventName().equals("")){
+            rsList.get(index-1).setKeyWord(rsEvent.getKeyWord());
+        }else {
+            rsList.set(index-1, rsEvent);
+        }
     }
 }
