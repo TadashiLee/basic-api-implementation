@@ -36,4 +36,9 @@ public class RsController {
     public void addRsEvent(@RequestBody RsEvent rsEvent){
         rsList.add(rsEvent);
     }
+
+    @PutMapping("/rs/event/{index}")
+    public void putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
+        rsList.set(index-1, rsEvent);
+    }
 }
