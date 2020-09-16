@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.RsEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,21 +16,21 @@ public class RsController {
     UserService userService;
 
     @GetMapping("/rs/list")
-    public List<RsEvent> getAllRsEvent(@RequestParam(required = false) Integer start
+    public ResponseEntity<List<RsEvent>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
         if (start == null || end == null){
-            return userService.rsList;
+            return ResponseEntity.ok(userService.rsList);
         }
-            return userService.rsList.subList(start - 1, end);
+            return ResponseEntity.ok(userService.rsList.subList(start - 1, end));
     }
 
     @GetMapping("/rs/{index}")
-    public RsEvent getRsEvent(@PathVariable int index){
-        return userService.rsList.get(index-1);
+    public ResponseEntity<RsEvent> getRsEvent(@PathVariable int index){
+        return ResponseEntity.ok(userService.rsList.get(index-1));
     }
 
     @PostMapping("/rs/event")
-    public void addRsEvent(@Valid @RequestBody RsEvent rsEvent){
+    public ResponseEntity addRsEvent(@Valid @RequestBody RsEvent rsEvent){
         boolean flag = false;
         for (int i = 0; i < userService.getUserDtos().size(); i++) {
             if (rsEvent.getUserDto().getName().equals(userService.getUserDtos().get(i).getName())){
@@ -41,10 +42,11 @@ public class RsController {
         if (!flag){
             userService.userDtos.add(rsEvent.getUserDto());
         }
+        return ResponseEntity.created(null).build();
     }
 
     @PutMapping("/rs/event/{index}")
-    public void putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
+    public ResponseEntity putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
         if (rsEvent.getKeyWord().equals("")){
             userService.rsList.get(index-1).setEventName(rsEvent.getEventName());
         }else if(rsEvent.getEventName().equals("")){
@@ -52,13 +54,15 @@ public class RsController {
         }else{
             userService.rsList.set(index-1, rsEvent);
         }
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/rs/event/{index}")
-    public void deleteRsEvent(@PathVariable int index){
+    public ResponseEntity deleteRsEvent(@PathVariable int index){
         if (index <= userService.rsList.size()){
             userService.rsList.remove(index-1);
         }
+        return ResponseEntity.ok().build();
     }
 
 }
