@@ -102,7 +102,7 @@ public class RsControllerTest {
     }
 
     @Test
-    void should_add_a_rs_event_if_userName_is_not_exist() throws Exception {
+    void should_add_a_rs_event_if_userName_is_not_exist_and_add_user_to_userDto() throws Exception {
         UserDto userDto = new UserDto("zhao", "male", 20, "wenchang.li@twuc.com", "13308111111");
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -124,7 +124,14 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[2].keyWord", is("无分类")))
                 .andExpect(jsonPath("$[3].eventName", is("猪肉涨价了")))
                 .andExpect(jsonPath("$[3].keyWord", is("经济")))
-                .andExpect(jsonPath("$[3].keyWord", is("经济")));
+                .andExpect(jsonPath("$[3].userDto.name", is("zhao")));
+        mockMvc.perform(get("/user/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].name", is("zhang")))
+                .andExpect(jsonPath("$[1].name", is("wang")))
+                .andExpect(jsonPath("$[2].name", is("li")))
+                .andExpect(jsonPath("$[3].name", is("zhao")));
 
     }
 

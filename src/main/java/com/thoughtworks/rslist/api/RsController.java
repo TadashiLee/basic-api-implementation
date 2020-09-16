@@ -37,10 +37,10 @@ public class RsController {
                 break;
             }
         }
-        if (flag){
-            userService.rsList.add(rsEvent);
+        userService.rsList.add(rsEvent);
+        if (!flag){
+            userService.userDtos.add(rsEvent.getUserDto());
         }
-
     }
 
     @PutMapping("/rs/event/{index}")
