@@ -57,6 +57,13 @@ public class RsControllerTest {
     }
 
     @Test
+    void should_get_error_by_error_index() throws Exception {
+        mockMvc.perform(get("/rs/5"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid index")));
+    }
+
+    @Test
     void should_get_rs_by_range() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=3"))
                 .andExpect(status().isOk())
@@ -67,6 +74,13 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[1].keyWord", is("无分类")))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyWord", is("无分类")));
+    }
+
+    @Test
+    void should_get_error_by_error_range() throws Exception {
+        mockMvc.perform(get("/rs/list?start=1&end=4"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid request param")));
     }
 
     @Test
@@ -143,7 +157,8 @@ public class RsControllerTest {
         String json = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid param")));
     }
 
     @Test
@@ -226,7 +241,7 @@ public class RsControllerTest {
 
     @Test
     void should_edit_a_rs_event_just_input_eventName() throws Exception {
-        UserDto userDto = new UserDto("zhang","male",21,"wenchang.li@twuc.com","13308111111");
+        UserDto userDto = new UserDto("zhang", "male", 21, "wenchang.li@twuc.com", "13308111111");
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "", userDto);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);

@@ -1,8 +1,10 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.exceptions.CommentError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,4 +36,10 @@ public class UserController {
         return ResponseEntity.created(null).build();
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CommentError> handlerExceptions(Exception ex) {
+        CommentError commentError = new CommentError();
+        commentError.setError("invalid user");
+        return ResponseEntity.badRequest().body(commentError);
+    }
 }
