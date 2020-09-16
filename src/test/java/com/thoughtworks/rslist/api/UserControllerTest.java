@@ -54,4 +54,15 @@ public class UserControllerTest {
         mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void should_not_register_gender_empty() throws Exception {
+        UserDto userDto = new UserDto("Tadashi","",20,"wenchang.li@twuc.com","13308111111");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDtoJson = objectMapper.writeValueAsString(userDto);
+
+        mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
