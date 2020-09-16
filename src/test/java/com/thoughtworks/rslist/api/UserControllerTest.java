@@ -120,4 +120,37 @@ public class UserControllerTest {
         mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void should_not_register_phone_is_invalidate_begin_with_no_1() throws Exception {
+        UserDto userDto = new UserDto("Tadashi","male",18,"wenchang.li@twuc.com","20123456789");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDtoJson = objectMapper.writeValueAsString(userDto);
+
+        mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_not_register_phone_is_invalidate_to_short() throws Exception {
+        UserDto userDto = new UserDto("Tadashi","male",18,"wenchang.li@twuc.com","20123456789");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDtoJson = objectMapper.writeValueAsString(userDto);
+
+        mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_not_register_phone_is_empty() throws Exception {
+        UserDto userDto = new UserDto("Tadashi","male",18,"wenchang.li@twuc.com","");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDtoJson = objectMapper.writeValueAsString(userDto);
+
+        mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
