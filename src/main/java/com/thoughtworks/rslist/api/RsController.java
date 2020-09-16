@@ -30,8 +30,17 @@ public class RsController {
 
     @PostMapping("/rs/event")
     public void addRsEvent(@Valid @RequestBody RsEvent rsEvent){
+        boolean flag = false;
+        for (int i = 0; i < userService.getUserDtos().size(); i++) {
+            if (rsEvent.getUserDto().getName().equals(userService.getUserDtos().get(i).getName())){
+                flag = true;
+                break;
+            }
+        }
+        if (flag){
+            userService.rsList.add(rsEvent);
+        }
 
-        userService.rsList.add(rsEvent);
     }
 
     @PutMapping("/rs/event/{index}")

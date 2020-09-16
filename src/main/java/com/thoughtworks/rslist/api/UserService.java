@@ -13,17 +13,27 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class UserService {
-    List<UserDto> userDtos = new ArrayList<>();
+    UserDto userDto1 = new UserDto("zhang","male",20,"wenchang.li@twuc.com","13308111111");
+    UserDto userDto2 = new UserDto("wang","male",20,"wenchang.li@twuc.com","13308111111");
+    UserDto userDto3 = new UserDto("li","male",20,"wenchang.li@twuc.com","13308111111");
+    List<UserDto> userDtos = initUserDtos();
     List<RsEvent> rsList = initRsList();
 
     private List<RsEvent> initRsList(){
         List<RsEvent> tempList = new ArrayList<>();
-        UserDto userDto1 = new UserDto("zhang","male",20,"wenchang.li@twuc.com","13308111111");
-        UserDto userDto2 = new UserDto("wang","male",20,"wenchang.li@twuc.com","13308111111");
-        UserDto userDto3 = new UserDto("li","male",20,"wenchang.li@twuc.com","13308111111");
+
         tempList.add(new RsEvent("第一条事件","无分类",userDto1));
         tempList.add(new RsEvent("第二条事件","无分类",userDto2));
         tempList.add(new RsEvent("第三条事件","无分类",userDto3));
         return tempList;
     }
+
+    private List<UserDto> initUserDtos(){
+        List<UserDto> tempList = new ArrayList<>();
+        tempList.add(userDto1);
+        tempList.add(userDto2);
+        tempList.add(userDto3);
+        return tempList;
+    }
+
 }

@@ -70,8 +70,8 @@ public class RsControllerTest {
     }
 
     @Test
-    void should_add_a_rs_event() throws Exception {
-        UserDto userDto = new UserDto("zhang", "male", 21, "wenchang.li@twuc.com", "13308111111");
+    void should_add_a_rs_event_if_userName_is_exist() throws Exception {
+        UserDto userDto = new UserDto("wang", "male", 20, "wenchang.li@twuc.com", "13308111111");
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
