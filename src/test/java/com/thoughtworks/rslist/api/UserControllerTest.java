@@ -10,7 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -21,6 +25,42 @@ public class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Test
+    void should_get_userDto() throws Exception {
+        mockMvc.perform(get("/user/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].name", is("zhang")))
+                .andExpect(jsonPath("$[1].name", is("wang")))
+                .andExpect(jsonPath("$[2].name", is("li")));
+
+    }
+
+    @Test
+    void should_get_one_userDto() throws Exception {
+        mockMvc.perform(get("/user/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("zhang")));
+
+        mockMvc.perform(get("/user/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("wang")));
+
+        mockMvc.perform(get("/user/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("li")));
+    }
+
+    @Test
+    void should_get_rs_by_range() throws Exception {
+        mockMvc.perform(get("/user/list?start=1&end=3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].name", is("zhang")))
+                .andExpect(jsonPath("$[1].name", is("wang")))
+                .andExpect(jsonPath("$[2].name", is("li")));
+    }
 
     @Test
     void should_register_user() throws Exception {

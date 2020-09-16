@@ -91,7 +91,41 @@ public class RsControllerTest {
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyWord", is("无分类")))
                 .andExpect(jsonPath("$[3].eventName", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[3].keyWord", is("经济")))
+                .andExpect(jsonPath("$[3].userDto.name", is("wang")));
+        mockMvc.perform(get("/user/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].name", is("zhang")))
+                .andExpect(jsonPath("$[1].name", is("wang")))
+                .andExpect(jsonPath("$[2].name", is("li")));
+    }
+
+    @Test
+    void should_add_a_rs_event_if_userName_is_not_exist() throws Exception {
+        UserDto userDto = new UserDto("zhao", "male", 20, "wenchang.li@twuc.com", "13308111111");
+        RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyWord", is("无分类")))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyWord", is("无分类")))
+                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[2].keyWord", is("无分类")))
+                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[3].keyWord", is("经济")))
                 .andExpect(jsonPath("$[3].keyWord", is("经济")));
+
     }
 
     @Test
