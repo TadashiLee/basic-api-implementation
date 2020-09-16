@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.dto.RsEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,16 +29,16 @@ public class RsController {
     }
 
     @PostMapping("/rs/event")
-    public void addRsEvent(@RequestBody RsEvent rsEvent){
+    public void addRsEvent(@Valid @RequestBody RsEvent rsEvent){
         userService.rsList.add(rsEvent);
     }
 
     @PutMapping("/rs/event/{index}")
     public void putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
-        if (rsEvent.getEventName().equals("")){
-            userService.rsList.get(index-1).setKeyWord(rsEvent.getKeyWord());
-        }else if(rsEvent.getEventName().equals("")){
+        if (rsEvent.getKeyWord().equals("")){
             userService.rsList.get(index-1).setEventName(rsEvent.getEventName());
+        }else if(rsEvent.getEventName().equals("")){
+            userService.rsList.get(index-1).setKeyWord(rsEvent.getKeyWord());
         }else{
             userService.rsList.set(index-1, rsEvent);
         }

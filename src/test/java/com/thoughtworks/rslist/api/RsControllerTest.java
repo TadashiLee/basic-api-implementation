@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -93,6 +92,26 @@ public class RsControllerTest {
     }
 
     @Test
+    void should_not_add_a_rs_event_if_eventName_is_empty() throws Exception {
+        RsEvent rsEvent = new RsEvent("","经济");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_not_add_a_rs_event_if_keyWord_is_empty() throws Exception {
+        RsEvent rsEvent = new RsEvent("猪肉涨价了","");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_edit_a_rs_event() throws Exception {
         RsEvent rsEvent = new RsEvent("猪肉涨价了","经济");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -138,7 +157,7 @@ public class RsControllerTest {
 
     @Test
     void should_edit_a_rs_event_just_input_eventName() throws Exception {
-        RsEvent rsEvent = new RsEvent("猪肉涨价了","无分类");
+        RsEvent rsEvent = new RsEvent("猪肉涨价了","");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
 
