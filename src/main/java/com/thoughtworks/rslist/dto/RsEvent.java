@@ -1,30 +1,19 @@
 package com.thoughtworks.rslist.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RsEvent {
+    @NotEmpty
     private String eventName;
+    @NotEmpty
     private String keyWord;
+//    private UserDto userDto;
 
-    public RsEvent() {
-    }
-
-    public RsEvent(String eventName, String keyWord) {
-        this.eventName = eventName;
-        this.keyWord = keyWord;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
-
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-    public String getKeyWord() {
-        return keyWord;
-    }
-
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
-    }
 }
