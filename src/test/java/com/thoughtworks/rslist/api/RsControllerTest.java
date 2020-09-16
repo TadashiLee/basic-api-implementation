@@ -127,6 +127,17 @@ public class RsControllerTest {
     }
 
     @Test
+    void should_not_add_a_rs_event_if_user_is_empty() throws Exception {
+        UserDto userDto = new UserDto();
+        RsEvent rsEvent = new RsEvent("", "经济", userDto);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_edit_a_rs_event() throws Exception {
         UserDto userDto = new UserDto("zhang", "male", 21, "wenchang.li@twuc.com", "13308111111");
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto);

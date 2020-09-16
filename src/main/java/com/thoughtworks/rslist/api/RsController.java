@@ -30,6 +30,7 @@ public class RsController {
 
     @PostMapping("/rs/event")
     public void addRsEvent(@Valid @RequestBody RsEvent rsEvent){
+
         userService.rsList.add(rsEvent);
     }
 
