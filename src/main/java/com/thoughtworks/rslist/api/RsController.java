@@ -41,7 +41,9 @@ public class RsController {
     public void putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index){
         if (rsEvent.getEventName().equals("")){
             rsList.get(index-1).setKeyWord(rsEvent.getKeyWord());
-        }else {
+        }else if(rsEvent.getEventName().equals("")){
+            rsList.get(index-1).setEventName(rsEvent.getEventName());
+        }else{
             rsList.set(index-1, rsEvent);
         }
     }
