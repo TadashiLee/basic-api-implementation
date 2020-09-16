@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -14,6 +15,7 @@ public class RsEvent {
     private String eventName;
     @NotEmpty
     private String keyWord;
-//    private UserDto userDto;
+    @NotNull
+    private UserDto userDto;
 
 }

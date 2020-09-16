@@ -18,9 +18,12 @@ public class UserService {
 
     private List<RsEvent> initRsList(){
         List<RsEvent> tempList = new ArrayList<>();
-        tempList.add(new RsEvent("第一条事件","无分类"));
-        tempList.add(new RsEvent("第二条事件","无分类"));
-        tempList.add(new RsEvent("第三条事件","无分类"));
+        UserDto userDto1 = new UserDto("zhang","male",20,"wenchang.li@twuc.com","13308111111");
+        UserDto userDto2 = new UserDto("wang","male",20,"wenchang.li@twuc.com","13308111111");
+        UserDto userDto3 = new UserDto("li","male",20,"wenchang.li@twuc.com","13308111111");
+        tempList.add(new RsEvent("第一条事件","无分类",userDto1));
+        tempList.add(new RsEvent("第二条事件","无分类",userDto2));
+        tempList.add(new RsEvent("第三条事件","无分类",userDto3));
         return tempList;
     }
 }
