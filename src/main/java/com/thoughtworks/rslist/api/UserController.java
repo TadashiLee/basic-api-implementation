@@ -64,6 +64,12 @@ public class UserController {
         return ResponseEntity.created(null).build();
     }
 
+    @DeleteMapping("/user/event/{id}")
+    public ResponseEntity deleteUser(@PathVariable int id){
+        userRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommentError> handlerExceptions(Exception ex) {
         CommentError commentError = new CommentError();
