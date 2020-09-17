@@ -11,6 +11,7 @@ public class UserDto {
 
     @NotEmpty
     @Size(max = 8)
+//    @JsonProperty("user_name")
     private String name;
 
     @NotEmpty
