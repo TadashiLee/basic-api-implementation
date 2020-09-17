@@ -16,17 +16,8 @@ public class RsEvent {
     private String eventName;
     @NotEmpty
     private String keyWord;
-    @NotNull
-    @Valid
-    private UserDto userDto;
-
-//    @JsonIgnore
-    public UserDto getUserDto() {
-        return userDto;
-    }
-
-//    @JsonProperty
-    public void setUserDto(UserDto userDto) {
-        this.userDto = userDto;
-    }
+//    @NotNull
+//    @Valid
+//    private UserDto userDto;
+    private int userId;
 }

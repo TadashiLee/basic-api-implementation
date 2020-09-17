@@ -22,9 +22,9 @@ public class UserService {
     private List<RsEvent> initRsList(){
         List<RsEvent> tempList = new ArrayList<>();
 
-        tempList.add(new RsEvent("第一条事件","无分类",userDto1));
-        tempList.add(new RsEvent("第二条事件","无分类",userDto2));
-        tempList.add(new RsEvent("第三条事件","无分类",userDto3));
+//        tempList.add(new RsEvent("第一条事件","无分类",userDto1));
+//        tempList.add(new RsEvent("第二条事件","无分类",userDto2));
+//        tempList.add(new RsEvent("第三条事件","无分类",userDto3));
         return tempList;
     }
 

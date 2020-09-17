@@ -33,7 +33,9 @@ public class UserDto {
     @NotEmpty
     @Pattern(regexp = "^1\\d{10}$")
     private String phone;
-    private Integer vote = 0;
+
+    @Builder.Default
+    private Integer vote = 10;
 
     public UserDto(String name, String gender, Integer age, String email, String phone) {
         this.name = name;
