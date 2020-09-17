@@ -35,18 +35,18 @@ public class RsController {
 
     @PostMapping("/rs/event")
     public ResponseEntity addRsEvent(@Valid @RequestBody RsEvent rsEvent){
-        boolean flag = false;
+        boolean verifyUserExist = false;
         for (int i = 0; i < userService.getUserDtos().size(); i++) {
             if (rsEvent.getUserDto().getName().equals(userService.getUserDtos().get(i).getName())){
-                flag = true;
+                verifyUserExist = true;
                 break;
             }
         }
         userService.rsList.add(rsEvent);
-        if (!flag){
+        if (!verifyUserExist){
             userService.userDtos.add(rsEvent.getUserDto());
         }
-        return ResponseEntity.created(null).build();
+        return ResponseEntity.created(null).header("index", String.valueOf(userService.getRsList().size()-1)).build();
     }
 
     @PutMapping("/rs/event/{index}")
