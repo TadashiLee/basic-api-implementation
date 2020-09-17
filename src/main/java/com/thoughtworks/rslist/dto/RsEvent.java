@@ -20,4 +20,13 @@ public class RsEvent {
     @Valid
     private UserDto userDto;
 
+//    @JsonIgnore
+    public UserDto getUserDto() {
+        return userDto;
+    }
+
+//    @JsonProperty
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
+    }
 }

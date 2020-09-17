@@ -26,7 +26,6 @@ public class ExceptionHandler {
             return ResponseEntity.badRequest().body(commentError);
         }
 
-
         CommentError commentError = new CommentError();
         commentError.setError("invalid user");
         return ResponseEntity.badRequest().body(commentError);
