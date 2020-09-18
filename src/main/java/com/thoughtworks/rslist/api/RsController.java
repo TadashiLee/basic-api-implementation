@@ -24,6 +24,8 @@ public class RsController {
     @Autowired
     private RsEventRepository rsEventRepository;
 
+
+
     @GetMapping("/rs/list")
     public ResponseEntity<List<RsEvent>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {

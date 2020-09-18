@@ -36,6 +36,7 @@ public class UserController {
         Optional<UserEntity> result = userRepository.findById(id);
         if (!result.isPresent()){
             throw new RuntimeException();
+//            throw new RequestNotValidException("invalid id");
         }
         UserEntity user = result.get();
 
@@ -67,7 +68,7 @@ public class UserController {
     @DeleteMapping("/user/event/{id}")
     public ResponseEntity deleteUser(@PathVariable int id){
         userRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

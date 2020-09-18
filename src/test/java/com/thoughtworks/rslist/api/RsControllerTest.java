@@ -40,7 +40,7 @@ public class RsControllerTest {
     RsEventRepository rsEventRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
     }
@@ -89,6 +89,36 @@ public class RsControllerTest {
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_delete_user() throws Exception {
+        UserEntity user = UserEntity.builder()
+                .userName("Tadashi")
+                .gender("male")
+                .age(20)
+                .phone("13308375411")
+                .email("123@twu.com")
+                .voteNum(10)
+                .build();
+        userRepository.save(user);
+
+        RsEventEntity rsEvent = RsEventEntity.builder()
+                .eventName("event 0")
+                .keyword("key")
+                .userId(user.getId())
+                .build();
+
+        rsEventRepository.save(rsEvent);
+
+        mockMvc.perform(delete("/user/event/{id}", user.getId()))
+                .andExpect(status().isNoContent());
+        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        List<UserEntity> users = userRepository.findAll();
+
+        assertEquals(0, users.size());
+        assertEquals(0, rsEvents.size());
+
     }
 
 //    @Test
