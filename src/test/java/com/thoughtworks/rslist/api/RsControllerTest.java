@@ -46,16 +46,27 @@ public class RsControllerTest {
     }
 
     @Test
+    void should_get_rs_list() throws Exception {
+
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+                .andExpect(jsonPath("$.eventName", is("event 0")))
+                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+    }
+
+    @Test
+    void should_get_one_event() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+                .andExpect(jsonPath("$.eventName", is("event 0")))
+                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+    }
+
+    @Test
     public void should_add_rsEvent_when_user_exists() throws Exception {
-        UserEntity user = UserEntity.builder()
-                .userName("Tadashi")
-                .gender("male")
-                .age(20)
-                .phone("13308375411")
-                .email("123@twu.com")
-                .voteNum(10)
-                .build();
-        userRepository.save(user);
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         UserDto userDto = new UserDto("Tadashi", "male", 20, "123@twu.com", "13308375411");
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto, user.getId());
         ObjectMapper objectMapper = new ObjectMapper();
@@ -73,17 +84,10 @@ public class RsControllerTest {
 
     @Test
     public void should_not_add_rsEvent_when_user_not_exists() throws Exception {
-        UserEntity user = UserEntity.builder()
-                .userName("Tadashi")
-                .gender("male")
-                .age(20)
-                .phone("13308375411")
-                .email("123@twu.com")
-                .voteNum(10)
-                .build();
-        userRepository.save(user);
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         UserDto userDto = new UserDto("Tadashi", "male", 20, "123@twu.com", "13308375411");
         int anotheId = 2;
+
         RsEvent rsEvent = new RsEvent("猪肉涨价了", "经济", userDto, anotheId);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
@@ -96,57 +100,38 @@ public class RsControllerTest {
 
     @Test
     void should_delete_user() throws Exception {
-        UserEntity user = UserEntity.builder()
-                .userName("Tadashi")
-                .gender("male")
-                .age(20)
-                .phone("13308375411")
-                .email("123@twu.com")
-                .voteNum(10)
-                .build();
-        userRepository.save(user);
-
-        RsEventEntity rsEvent = RsEventEntity.builder()
-                .eventName("event 0")
-                .keyword("key")
-                .user(user)
-                .build();
-
-        rsEventRepository.save(rsEvent);
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
 
         mockMvc.perform(delete("/user/event/{id}", user.getId()))
                 .andExpect(status().isNoContent());
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
         List<UserEntity> users = userRepository.findAll();
-
         assertEquals(0, users.size());
         assertEquals(0, rsEvents.size());
-
     }
 
-    @Test
-    void should_get_one_event() throws Exception {
-        UserEntity user = UserEntity.builder()
-                .userName("Tadashi")
-                .gender("male")
-                .age(20)
-                .phone("13308375411")
-                .email("123@twu.com")
-                .voteNum(10)
-                .build();
-        userRepository.save(user);
-
+    private RsEventEntity saveOneRsEventEntity(String eventName, String keyWord, UserEntity user){
         RsEventEntity rsEvent = RsEventEntity.builder()
-                .eventName("event 0")
-                .keyword("key")
+                .eventName(eventName)
+                .keyword(keyWord)
                 .user(user)
                 .build();
         rsEventRepository.save(rsEvent);
+        return rsEvent;
+    }
 
-        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
-                .andExpect(jsonPath("$.eventName", is("event 0")))
-                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
-
+    private UserEntity saveOneUserEntity(String userName, String gender, int age, String phone, String email, int voteNum){
+        UserEntity user = UserEntity.builder()
+                .userName(userName)
+                .gender(gender)
+                .age(age)
+                .phone(phone)
+                .email(email)
+                .voteNum(voteNum)
+                .build();
+        userRepository.save(user);
+        return user;
     }
 
 //    @Test
