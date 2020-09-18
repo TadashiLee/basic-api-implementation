@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RsEvent {
@@ -16,8 +18,8 @@ public class RsEvent {
     private String eventName;
     @NotEmpty
     private String keyWord;
-//    @NotNull
-//    @Valid
-//    private UserDto userDto;
+    @NotNull
+    @Valid
+    private UserDto userDto;
     private int userId;
 }

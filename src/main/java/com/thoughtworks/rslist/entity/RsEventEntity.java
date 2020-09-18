@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.entity;
 
+import com.thoughtworks.rslist.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,8 @@ public class RsEventEntity {
     @Column(name = "name")
     private String eventName;
     private String keyword;
+
     private int userId;
+//    @ManyToOne
+//    private UserEntity userDto;
 }
