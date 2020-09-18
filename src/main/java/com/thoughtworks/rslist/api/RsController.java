@@ -13,28 +13,47 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
 public class RsController {
 
     @Autowired
     UserService userService;
-    //    private final UserRepository userRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RsEventRepository rsEventRepository;
+    private final UserRepository userRepository;
+    private final RsEventRepository rsEventRepository;
+
+    public RsController(UserRepository userRepository, RsEventRepository rsEventRepository) {
+        this.userRepository = userRepository;
+        this.rsEventRepository = rsEventRepository;
+    }
 
 
     @GetMapping("/rs/list")
     public ResponseEntity<List<RsEvent>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
+        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        List<RsEvent> rsEventList = new ArrayList<>();
+        Stream.iterate(0, i -> i + 1).limit(rsEvents.size()).forEach(i -> {
+            UserEntity user = rsEvents.get(i).getUser();
+            rsEventList.add(RsEvent.builder()
+                    .eventName(rsEvents.get(i).getEventName())
+                    .keyWord(rsEvents.get(i).getKeyword())
+                    .userDto(new UserDto(
+                            user.getUserName(),
+                            user.getGender(),
+                            user.getAge(),
+                            user.getEmail(),
+                            user.getPhone()))
+                    .build());
+        });
         if (start == null || end == null) {
-            return ResponseEntity.ok(userService.rsList);
+            return ResponseEntity.ok(rsEventList);
         }
-        return ResponseEntity.ok(userService.rsList.subList(start - 1, end));
+        return ResponseEntity.ok(rsEventList.subList(start - 1, end));
     }
 
     @GetMapping("/rs/{id}")
@@ -72,8 +91,8 @@ public class RsController {
                         .build())
                 .build();
         rsEventRepository.save(rsEventEntity);
-        return ResponseEntity.created(null).build();
-//        .header("index", String.valueOf(userService.getRsList().size() - 1)).build();
+        return ResponseEntity.created(null)
+                .header("userId", String.valueOf(rsEventEntity.getUser().getId())).build();
     }
 
     @PutMapping("/rs/event/{index}")
