@@ -44,7 +44,8 @@ public class RsController {
             throw new InvalidIndexError();
         }
         RsEventEntity rsEvent = result.get();
-        UserEntity user = userRepository.findById(rsEvent.getUserId()).get();
+        UserEntity user = rsEvent.getUser();
+
         return ResponseEntity.ok(RsEvent.builder()
                 .eventName(rsEvent.getEventName())
                 .keyWord(rsEvent.getKeyword())
@@ -65,7 +66,10 @@ public class RsController {
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyWord())
-                .userId(rsEvent.getUserId())
+                .user(UserEntity.builder()
+                        //为什么只有一个参数
+                        .id(rsEvent.getUserId())
+                        .build())
                 .build();
         rsEventRepository.save(rsEventEntity);
         return ResponseEntity.created(null).build();
