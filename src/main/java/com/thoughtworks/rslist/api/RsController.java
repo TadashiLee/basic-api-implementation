@@ -9,6 +9,7 @@ import com.thoughtworks.rslist.exceptions.InvalidIndexError;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.request.RsEventPatchRequest;
+import com.thoughtworks.rslist.response.RsEventResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,21 +32,17 @@ public class RsController {
 
 
     @GetMapping("/rs/list")
-    public ResponseEntity<List<RsEvent>> getAllRsEvent(@RequestParam(required = false) Integer start
+    public ResponseEntity<List<RsEventResponse>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
-        List<RsEvent> rsEventList = new ArrayList<>();
+        List<RsEventResponse> rsEventList = new ArrayList<>();
         Stream.iterate(0, i -> i + 1).limit(rsEvents.size()).forEach(i -> {
             UserEntity user = rsEvents.get(i).getUser();
-            rsEventList.add(RsEvent.builder()
+            rsEventList.add(RsEventResponse.builder()
                     .eventName(rsEvents.get(i).getEventName())
                     .keyWord(rsEvents.get(i).getKeyword())
-                    .userDto(new UserDto(
-                            user.getUserName(),
-                            user.getGender(),
-                            user.getAge(),
-                            user.getEmail(),
-                            user.getPhone()))
+                    .id(rsEvents.get(i).getId())
+                    .votNum(rsEvents.get(i).getVoteNum())
                     .build());
         });
         if (start == null || end == null) {
@@ -55,7 +52,7 @@ public class RsController {
     }
 
     @GetMapping("/rs/{id}")
-    public ResponseEntity<RsEvent> getRsEvent(@PathVariable int id) {
+    public ResponseEntity<RsEventResponse> getRsEvent(@PathVariable int id) {
         Optional<RsEventEntity> result = rsEventRepository.findById(id);
         if (!result.isPresent()) {
             throw new InvalidIndexError();
@@ -63,15 +60,11 @@ public class RsController {
         RsEventEntity rsEvent = result.get();
         UserEntity user = rsEvent.getUser();
 
-        return ResponseEntity.ok(RsEvent.builder()
+        return ResponseEntity.ok(RsEventResponse.builder()
                 .eventName(rsEvent.getEventName())
                 .keyWord(rsEvent.getKeyword())
-                .userDto(new UserDto(
-                        user.getUserName(),
-                        user.getGender(),
-                        user.getAge(),
-                        user.getEmail(),
-                        user.getPhone()))
+                .id(rsEvent.getId())
+                .votNum(rsEvent.getVoteNum())
                 .build());
     }
 
@@ -99,14 +92,12 @@ public class RsController {
         }
         String newName;
         String newKey;
-        if (rsEventPatchRequest.getNewName()==null) {
-            Optional<RsEventEntity> result = rsEventRepository.findById(id);
-            RsEventEntity rsEvent = result.get();
+        Optional<RsEventEntity> result = rsEventRepository.findById(id);
+        RsEventEntity rsEvent = result.get();
+        if (rsEventPatchRequest.getNewName() == null) {
             newName = rsEvent.getEventName();
             newKey = rsEventPatchRequest.getNewKey();
-        } else if (rsEventPatchRequest.getNewKey()==null) {
-            Optional<RsEventEntity> result = rsEventRepository.findById(id);
-            RsEventEntity rsEvent = result.get();
+        } else if (rsEventPatchRequest.getNewKey() == null) {
             newName = rsEventPatchRequest.getNewName();
             newKey = rsEvent.getKeyword();
         } else {
@@ -117,6 +108,7 @@ public class RsController {
                 .id(id)
                 .eventName(newName)
                 .keyword(newKey)
+                .voteNum(rsEvent.getVoteNum())
                 .user(UserEntity.builder()
                         .id(rsEventPatchRequest.getUserId())
                         .build())

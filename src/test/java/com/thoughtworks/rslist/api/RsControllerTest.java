@@ -58,9 +58,13 @@ public class RsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("event 0")))
-                .andExpect(jsonPath("$[0].userDto.name", is("Tadashi")))
+                .andExpect(jsonPath("$[0].keyWord", is("key")))
+                .andExpect(jsonPath("$[0].votNum", is(rsEvent.getVoteNum())))
+                .andExpect(jsonPath("$[0].id", is(rsEvent.getId())))
                 .andExpect(jsonPath("$[1].eventName", is("event 1")))
-                .andExpect(jsonPath("$[1].userDto.name", is("lee")));
+                .andExpect(jsonPath("$[1].keyWord", is("key")))
+                .andExpect(jsonPath("$[1].votNum", is(rsEvent1.getVoteNum())))
+                .andExpect(jsonPath("$[1].id", is(rsEvent1.getId())));
     }
 
     @Test
@@ -76,9 +80,13 @@ public class RsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("event 0")))
-                .andExpect(jsonPath("$[0].userDto.name", is("Tadashi")))
+                .andExpect(jsonPath("$[0].keyWord", is("key")))
+                .andExpect(jsonPath("$[0].votNum", is(rsEvent.getVoteNum())))
+                .andExpect(jsonPath("$[0].id", is(rsEvent.getId())))
                 .andExpect(jsonPath("$[1].eventName", is("event 1")))
-                .andExpect(jsonPath("$[1].userDto.name", is("lee")));
+                .andExpect(jsonPath("$[1].keyWord", is("key")))
+                .andExpect(jsonPath("$[1].votNum", is(rsEvent1.getVoteNum())))
+                .andExpect(jsonPath("$[1].id", is(rsEvent1.getId())));
     }
 
     @Test
@@ -94,7 +102,9 @@ public class RsControllerTest {
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
         mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("event 0")))
-                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+                .andExpect(jsonPath("$.keyWord", is("key")))
+                .andExpect(jsonPath("$.votNum", is(rsEvent.getVoteNum())))
+                .andExpect(jsonPath("$.id", is(rsEvent.getId())));
     }
 
     @Test
@@ -192,8 +202,7 @@ public class RsControllerTest {
 
         mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("new event")))
-                .andExpect(jsonPath("$.keyWord", is("new key")))
-                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+                .andExpect(jsonPath("$.keyWord", is("new key")));
 
     }
     @Test
@@ -212,8 +221,7 @@ public class RsControllerTest {
 
         mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("event 0")))
-                .andExpect(jsonPath("$.keyWord", is("new key")))
-                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+                .andExpect(jsonPath("$.keyWord", is("new key")));
 
     }
 
@@ -233,8 +241,7 @@ public class RsControllerTest {
 
         mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("new event")))
-                .andExpect(jsonPath("$.keyWord", is("key")))
-                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+                .andExpect(jsonPath("$.keyWord", is("key")));
 
     }
 
