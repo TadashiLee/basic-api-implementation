@@ -4,31 +4,45 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exceptions.CommentError;
 import com.thoughtworks.rslist.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @RestController
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/user/list")
     public ResponseEntity<List<UserDto>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
+
+        List<UserEntity> users = userRepository.findAll();
+        List<UserDto> userList = new ArrayList<>();
+        Stream.iterate(0, i -> i + 1).limit(users.size()).forEach(i -> {
+            userList.add(UserDto.builder()
+                    .name(users.get(i).getUserName())
+                    .gender(users.get(i).getGender())
+                    .age(users.get(i).getAge())
+                    .email(users.get(i).getEmail())
+                    .phone(users.get(i).getPhone())
+                    .vote(users.get(i).getVoteNum())
+                    .build());
+        });
         if (start == null || end == null){
-            return ResponseEntity.ok(userService.userDtos);
+            return ResponseEntity.ok(userList);
         }
-        return ResponseEntity.ok(userService.userDtos.subList(start - 1, end));
+        return ResponseEntity.ok(userList.subList(start - 1, end));
     }
 
     @GetMapping("/user/{id}")
