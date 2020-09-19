@@ -7,7 +7,7 @@ import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import com.thoughtworks.rslist.request.RsEventRequest;
+import com.thoughtworks.rslist.request.RsEventPatchRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,9 +181,9 @@ public class RsControllerTest {
         UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
 
-        RsEventRequest rsEventRequest = new RsEventRequest("new event", "new key", user.getId());
+        RsEventPatchRequest rsEventPatchRequest = new RsEventPatchRequest("new event", "new key", user.getId());
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEventRequest);
+        String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
         mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
                 .content(json)
@@ -201,9 +201,9 @@ public class RsControllerTest {
         UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
 
-        RsEventRequest rsEventRequest = new RsEventRequest(null, "new key", user.getId());
+        RsEventPatchRequest rsEventPatchRequest = new RsEventPatchRequest(null, "new key", user.getId());
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEventRequest);
+        String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
         mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
                 .content(json)
@@ -222,9 +222,9 @@ public class RsControllerTest {
         UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
 
-        RsEventRequest rsEventRequest = new RsEventRequest("new event", null, user.getId());
+        RsEventPatchRequest rsEventPatchRequest = new RsEventPatchRequest("new event", null, user.getId());
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEventRequest);
+        String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
         mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
                 .content(json)

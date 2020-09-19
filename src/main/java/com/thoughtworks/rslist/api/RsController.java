@@ -8,7 +8,7 @@ import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exceptions.InvalidIndexError;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import com.thoughtworks.rslist.request.RsEventRequest;
+import com.thoughtworks.rslist.request.RsEventPatchRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,32 +93,32 @@ public class RsController {
     }
 
     @PatchMapping("/rs/event/{id}")
-    public ResponseEntity putRsEvent(@Valid @RequestBody RsEventRequest rsEventRequest, @PathVariable int id) {
-        if (!userRepository.existsById(rsEventRequest.getUserId())) {
+    public ResponseEntity putRsEvent(@Valid @RequestBody RsEventPatchRequest rsEventPatchRequest, @PathVariable int id) {
+        if (!userRepository.existsById(rsEventPatchRequest.getUserId())) {
             return ResponseEntity.badRequest().build();
         }
         String newName;
         String newKey;
-        if (rsEventRequest.getNewName()==null) {
+        if (rsEventPatchRequest.getNewName()==null) {
             Optional<RsEventEntity> result = rsEventRepository.findById(id);
             RsEventEntity rsEvent = result.get();
             newName = rsEvent.getEventName();
-            newKey = rsEventRequest.getNewKey();
-        } else if (rsEventRequest.getNewKey()==null) {
+            newKey = rsEventPatchRequest.getNewKey();
+        } else if (rsEventPatchRequest.getNewKey()==null) {
             Optional<RsEventEntity> result = rsEventRepository.findById(id);
             RsEventEntity rsEvent = result.get();
-            newName = rsEventRequest.getNewName();
+            newName = rsEventPatchRequest.getNewName();
             newKey = rsEvent.getKeyword();
         } else {
-            newName = rsEventRequest.getNewName();
-            newKey = rsEventRequest.getNewKey();
+            newName = rsEventPatchRequest.getNewName();
+            newKey = rsEventPatchRequest.getNewKey();
         }
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .id(id)
                 .eventName(newName)
                 .keyword(newKey)
                 .user(UserEntity.builder()
-                        .id(rsEventRequest.getUserId())
+                        .id(rsEventPatchRequest.getUserId())
                         .build())
                 .build();
         rsEventRepository.save(rsEventEntity);

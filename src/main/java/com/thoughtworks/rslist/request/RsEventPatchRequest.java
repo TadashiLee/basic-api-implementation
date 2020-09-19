@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RsEventRequest {
+public class RsEventPatchRequest {
     private String newName;
     private String newKey;
     @NotNull
