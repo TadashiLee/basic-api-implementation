@@ -165,6 +165,17 @@ public class RsControllerTest {
         assertEquals(0, rsEvents.size());
     }
 
+    @Test
+    public void delet_rsEvent_by_id() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+
+        mockMvc.perform(delete("/rs/event/{id}", rsEvent.getId()))
+                .andExpect(status().isNoContent());
+        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
+        assertEquals(0,rsEvents.size());
+    }
+
     private RsEventEntity saveOneRsEventEntity(String eventName, String keyWord, UserEntity user){
         RsEventEntity rsEvent = RsEventEntity.builder()
                 .eventName(eventName)
@@ -256,23 +267,6 @@ public class RsControllerTest {
 //                .andExpect(jsonPath("$[1].keyWord", is("无分类")))
 //                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
 //                .andExpect(jsonPath("$[2].keyWord", is("无分类")));
-//    }
-//
-//    @Test
-//    void remove_the_index_RsEvent_if_index_exist() throws Exception {
-//
-//        mockMvc.perform(get("/rs/list"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(3)));
-//        mockMvc.perform(delete("/rs/event/2"))
-//                .andExpect(status().isOk());
-//        mockMvc.perform(get("/rs/list"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(2)))
-//                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//                .andExpect(jsonPath("$[0].keyWord", is("无分类")))
-//                .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
-//                .andExpect(jsonPath("$[1].keyWord", is("无分类")));
 //    }
 
 }

@@ -67,6 +67,9 @@ public class UserController {
 
     @DeleteMapping("/user/event/{id}")
     public ResponseEntity deleteUser(@PathVariable int id){
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

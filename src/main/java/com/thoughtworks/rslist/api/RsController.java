@@ -107,12 +107,13 @@ public class RsController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/rs/event/{index}")
-    public ResponseEntity deleteRsEvent(@PathVariable int index) {
-        if (index <= userService.rsList.size()) {
-            userService.rsList.remove(index - 1);
+    @DeleteMapping("/rs/event/{id}")
+    public ResponseEntity deleteRsEvent(@PathVariable int id) {
+        if (!rsEventRepository.existsById(id)) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        rsEventRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
