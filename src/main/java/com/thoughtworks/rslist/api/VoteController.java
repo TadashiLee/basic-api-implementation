@@ -10,6 +10,8 @@ import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class VoteController {
     private final UserRepository userRepository;
@@ -23,21 +25,30 @@ public class VoteController {
     }
 
     @PostMapping("/vote/event/{id}")
-    public ResponseEntity voteArsEvent(@RequestBody Vote vote, @PathVariable int id){
-        if (!userRepository.existsById(vote.getUserId())) {
+    public ResponseEntity voteArsEvent(@RequestBody Vote vote, @PathVariable int id) {
+
+        Optional<RsEventEntity> rsEventEntity = rsEventRepository.findById(id);
+        Optional<UserEntity> userEntity = userRepository.findById(vote.getUserId());
+        if (!rsEventEntity.isPresent() || !userEntity.isPresent() || vote.getVoteNum() > userEntity.get().getVoteNum()) {
             return ResponseEntity.badRequest().build();
         }
+
         VoteEntity voteEntity = VoteEntity.builder()
                 .num(vote.getVoteNum())
                 .time(vote.getTime())
-                .rsEvents(RsEventEntity.builder()
-                        .id(id)
-                        .build())
-                .user(UserEntity.builder()
-                        .id(vote.getUserId())
-                        .build())
+                .rsEvents(rsEventEntity.get())
+                .user(userEntity.get())
                 .build();
         voteRepository.save(voteEntity);
+
+        UserEntity user = userEntity.get();
+        user.setVoteNum(user.getVoteNum() - vote.getVoteNum());
+        userRepository.save(user);
+
+        RsEventEntity rsEvent = rsEventEntity.get();
+        rsEvent.setVoteNum(rsEvent.getVoteNum() + vote.getVoteNum());
+        rsEventRepository.save(rsEvent);
+
         return ResponseEntity.created(null).build();
     }
 }

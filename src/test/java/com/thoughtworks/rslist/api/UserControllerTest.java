@@ -65,12 +65,14 @@ public class UserControllerTest {
 
     @Test
     public void should_register_user() throws Exception {
-        UserDto userDto = new UserDto("Tadashi","male",20,"wenchang.li@twuc.com","13308111111");
+        UserDto userDto = new UserDto("Tadashi","male",20,"wenchang.li@twuc.com","13308111111", 10);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String userDtoJson = objectMapper.writeValueAsString(userDto);
 
-        mockMvc.perform(post("/user/register").content(userDtoJson).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user/register")
+                .content(userDtoJson)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
         List<UserEntity> users = userRepository.findAll();

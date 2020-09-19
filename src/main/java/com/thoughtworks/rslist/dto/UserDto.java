@@ -37,7 +37,7 @@ public class UserDto {
     @Builder.Default
     private Integer vote = 10;
 
-    public UserDto(String name, String gender, Integer age, String email, String phone) {
+    public UserDto(@NotEmpty @Size(max = 8) String name, @NotEmpty String gender, @NotNull @Max(100) @Min(18) Integer age, @NotEmpty @Email String email, @NotEmpty @Pattern(regexp = "^1\\d{10}$") String phone) {
         this.name = name;
         this.gender = gender;
         this.age = age;

@@ -25,4 +25,7 @@ public class RsEventEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @Builder.Default
+    private int voteNum=0;
 }

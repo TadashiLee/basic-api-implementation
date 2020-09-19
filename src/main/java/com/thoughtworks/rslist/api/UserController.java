@@ -70,8 +70,8 @@ public class UserController {
         UserEntity userEntity = UserEntity.builder()
                 .userName(userDto.getName())
                 .gender(userDto.getGender())
-                .age(userDto.getAge())
                 .email(userDto.getEmail())
+                .age(userDto.getAge())
                 .phone(userDto.getPhone())
                 .voteNum(userDto.getVote())
                 .build();
