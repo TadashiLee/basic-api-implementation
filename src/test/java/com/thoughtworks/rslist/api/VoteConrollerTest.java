@@ -70,7 +70,6 @@ public class VoteConrollerTest {
         assertEquals("event 0", votes.get(0).getRsEvents().getEventName());
         assertEquals(user.getId(), votes.get(0).getUser().getId());
         assertEquals(voteNum, votes.get(0).getNum());
-        assertEquals(timeLong, votes.get(0).getTime());
     }
 
     private RsEventEntity saveOneRsEventEntity(String eventName, String keyWord, UserEntity user){
