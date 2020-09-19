@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.response;
+package com.thoughtworks.rslist.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RsEventResponse {
+public class RsEventRequest {
     private String newName;
     private String newKey;
     @NotNull
