@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.response.RsEventResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,6 +174,68 @@ public class RsControllerTest {
                 .andExpect(status().isNoContent());
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
         assertEquals(0,rsEvents.size());
+    }
+
+    @Test
+    public void should_update_rsEvent_by_Id() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+
+        RsEventResponse rsEventResponse = new RsEventResponse("new event", "new key", user.getId());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEventResponse);
+
+        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+                .andExpect(jsonPath("$.eventName", is("new event")))
+                .andExpect(jsonPath("$.keyWord", is("new key")))
+                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+
+    }
+    @Test
+    public void should_just_update_rsEvent_keyWord_if_rsEvent_name_is_null_by_Id() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+
+        RsEventResponse rsEventResponse = new RsEventResponse(null, "new key", user.getId());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEventResponse);
+
+        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+                .andExpect(jsonPath("$.eventName", is("event 0")))
+                .andExpect(jsonPath("$.keyWord", is("new key")))
+                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+
+    }
+
+    @Test
+    public void should_just_update_rsEvent_name_if_keyWord_is_null_by_Id() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+
+        RsEventResponse rsEventResponse = new RsEventResponse("new event", null, user.getId());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEventResponse);
+
+        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+                .andExpect(jsonPath("$.eventName", is("new event")))
+                .andExpect(jsonPath("$.keyWord", is("key")))
+                .andExpect(jsonPath("$.userDto.name", is("Tadashi")));
+
     }
 
     private RsEventEntity saveOneRsEventEntity(String eventName, String keyWord, UserEntity user){

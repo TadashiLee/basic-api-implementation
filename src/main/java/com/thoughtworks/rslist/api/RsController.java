@@ -8,6 +8,7 @@ import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exceptions.InvalidIndexError;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.response.RsEventResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,6 @@ import java.util.stream.Stream;
 @RestController
 public class RsController {
 
-    @Autowired
-    UserService userService;
     private final UserRepository userRepository;
     private final RsEventRepository rsEventRepository;
 
@@ -86,7 +85,6 @@ public class RsController {
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyWord())
                 .user(UserEntity.builder()
-                        //为什么只有一个参数
                         .id(rsEvent.getUserId())
                         .build())
                 .build();
@@ -95,15 +93,37 @@ public class RsController {
                 .header("userId", String.valueOf(rsEventEntity.getUser().getId())).build();
     }
 
-    @PutMapping("/rs/event/{index}")
-    public ResponseEntity putRsEvent(@RequestBody RsEvent rsEvent, @PathVariable int index) {
-        if (rsEvent.getKeyWord().equals("")) {
-            userService.rsList.get(index - 1).setEventName(rsEvent.getEventName());
-        } else if (rsEvent.getEventName().equals("")) {
-            userService.rsList.get(index - 1).setKeyWord(rsEvent.getKeyWord());
-        } else {
-            userService.rsList.set(index - 1, rsEvent);
+    @PatchMapping("/rs/event/{id}")
+    public ResponseEntity putRsEvent(@Valid @RequestBody RsEventResponse rsEventResponse, @PathVariable int id) {
+        if (!userRepository.existsById(rsEventResponse.getUserId())) {
+            return ResponseEntity.badRequest().build();
         }
+        String newName;
+        String newKey;
+        if (rsEventResponse.getNewName()==null) {
+            Optional<RsEventEntity> result = rsEventRepository.findById(id);
+            RsEventEntity rsEvent = result.get();
+            newName = rsEvent.getEventName();
+            newKey = rsEventResponse.getNewKey();
+        } else if (rsEventResponse.getNewKey()==null) {
+            Optional<RsEventEntity> result = rsEventRepository.findById(id);
+            RsEventEntity rsEvent = result.get();
+            newName = rsEventResponse.getNewName();
+            newKey = rsEvent.getKeyword();
+        } else {
+            newName = rsEventResponse.getNewName();
+            newKey = rsEventResponse.getNewKey();
+        }
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .id(id)
+                .eventName(newName)
+                .keyword(newKey)
+                .user(UserEntity.builder()
+                        .id(rsEventResponse.getUserId())
+                        .build())
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
         return ResponseEntity.ok().build();
     }
 
