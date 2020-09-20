@@ -27,7 +27,7 @@ public class VoteController {
         this.voteRepository = voteRepository;
     }
 
-    @PostMapping("/vote/event/{id}")
+    @PostMapping("/rsEvent/{id}/vote")
     public ResponseEntity voteArsEvent(@RequestBody Vote vote, @PathVariable int id) {
 
         Optional<RsEventEntity> rsEventEntity = rsEventRepository.findById(id);
@@ -67,7 +67,7 @@ public class VoteController {
 //                .build()).collect(Collectors.toList()));
 //    }
 
-    @GetMapping("/vote/time")
+    @GetMapping("/votes")
     public ResponseEntity<List<Vote>> getVotesByTime(@RequestParam Timestamp start, @RequestParam Timestamp end){
         List<VoteEntity> votes = voteRepository.findAllByTimeBetween(start, end);
         return ResponseEntity.ok(votes.stream().map(vote -> Vote.builder()
