@@ -15,4 +15,5 @@ public class Vote {
     private int userId;
     private Timestamp time;
     private int voteNum;
+    private int rsEventId;
 }

@@ -22,10 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.sql.Timestamp;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,7 +59,7 @@ public class VoteConrollerTest {
         int voteNum = 5;
         long timeLong = 1473247063900L;
         Timestamp time = new Timestamp(timeLong);
-        Vote vote = new Vote(user.getId(), time, voteNum);
+        Vote vote = new Vote(user.getId(), time, voteNum, rsEvent.getId());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(vote);
 
@@ -81,6 +83,58 @@ public class VoteConrollerTest {
         rsEventRepository.save(rsEvent);
         return rsEvent;
     }
+
+    @Test
+    public void get_votes_by_userId_and_rsEventId() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+        VoteEntity vote = saveOneVoteEntity(5, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote1 = saveOneVoteEntity(1, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote2 = saveOneVoteEntity(2, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote3 = saveOneVoteEntity(3, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote4 = saveOneVoteEntity(4, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+
+        mockMvc.perform(get("/vote")
+                .param("userId", String.valueOf(user.getId()))
+                .param("rsEventId", String.valueOf(rsEvent.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].userId", is(user.getId())))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEvent.getId())))
+                .andExpect(jsonPath("$[0].voteNum", is(5)));
+    }
+
+    @Test
+    public void get_votes_by_time_range() throws Exception {
+        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
+        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
+        VoteEntity vote = saveOneVoteEntity(5, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote1 = saveOneVoteEntity(1, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote2 = saveOneVoteEntity(2, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote3 = saveOneVoteEntity(3, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+        VoteEntity vote4 = saveOneVoteEntity(4, new Timestamp(System.currentTimeMillis()), rsEvent, user);
+
+        mockMvc.perform(get("/vote/time")
+                .param("start", String.valueOf(vote.getTime()))
+                .param("end", String.valueOf(vote4.getTime())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].userId", is(user.getId())))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEvent.getId())))
+                .andExpect(jsonPath("$[0].voteNum", is(5)));
+    }
+
+    private VoteEntity saveOneVoteEntity(int voteNum, Timestamp time, RsEventEntity rsEvent, UserEntity user) {
+        VoteEntity vote = VoteEntity.builder()
+                .num(voteNum)
+                .time(time)
+                .rsEvents(rsEvent)
+                .user(user)
+                .build();
+        voteRepository.save(vote);
+        return vote;
+    }
+
 
     private UserEntity saveOneUserEntity(String userName, String gender, int age, String phone, String email, int voteNum){
         UserEntity user = UserEntity.builder()

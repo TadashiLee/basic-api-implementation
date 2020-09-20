@@ -10,7 +10,10 @@ import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class VoteController {
@@ -51,4 +54,28 @@ public class VoteController {
 
         return ResponseEntity.created(null).build();
     }
+
+//    @GetMapping("/vote")
+//
+//    public ResponseEntity<List<Vote>> getVotes(@RequestParam int userId, @RequestParam int rsEventId){
+//        List<VoteEntity> votes = voteRepository.findALLByUserIdAndRsEventId(userId, rsEventId);
+//        return ResponseEntity.ok(votes.stream().map(vote -> Vote.builder()
+//                .userId(vote.getUser().getId())
+//                .voteNum(vote.getNum())
+//                .time(vote.getTime())
+//                .rsEventId(vote.getRsEvents().getId())
+//                .build()).collect(Collectors.toList()));
+//    }
+
+    @GetMapping("/vote/time")
+    public ResponseEntity<List<Vote>> getVotesByTime(@RequestParam Timestamp start, @RequestParam Timestamp end){
+        List<VoteEntity> votes = voteRepository.findAllByTimeBetween(start, end);
+        return ResponseEntity.ok(votes.stream().map(vote -> Vote.builder()
+                .userId(vote.getUser().getId())
+                .voteNum(vote.getNum())
+                .time(vote.getTime())
+                .rsEventId(vote.getRsEvents().getId())
+                .build()).collect(Collectors.toList()));
+    }
+
 }
