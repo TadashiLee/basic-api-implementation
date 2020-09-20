@@ -31,7 +31,7 @@ public class RsController {
     }
 
 
-    @GetMapping("/rs/list")
+    @GetMapping("/rsEvents")
     public ResponseEntity<List<RsEventResponse>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
@@ -51,7 +51,7 @@ public class RsController {
         return ResponseEntity.ok(rsEventList.subList(start - 1, end));
     }
 
-    @GetMapping("/rs/{id}")
+    @GetMapping("/rsEvent/{id}")
     public ResponseEntity<RsEventResponse> getRsEvent(@PathVariable int id) {
         Optional<RsEventEntity> result = rsEventRepository.findById(id);
         if (!result.isPresent()) {
@@ -68,7 +68,7 @@ public class RsController {
                 .build());
     }
 
-    @PostMapping("/rs/event")
+    @PostMapping("/rsEvent")
     public ResponseEntity addRsEvent(@Valid @RequestBody RsEvent rsEvent) {
         if (!userRepository.existsById(rsEvent.getUserId())) {
             return ResponseEntity.badRequest().build();
@@ -85,7 +85,7 @@ public class RsController {
                 .header("userId", String.valueOf(rsEventEntity.getUser().getId())).build();
     }
 
-    @PatchMapping("/rs/event/{id}")
+    @PatchMapping("/rsEvent/{id}")
     public ResponseEntity putRsEvent(@Valid @RequestBody RsEventPatchRequest rsEventPatchRequest, @PathVariable int id) {
         if (!userRepository.existsById(rsEventPatchRequest.getUserId())) {
             return ResponseEntity.badRequest().build();
@@ -118,7 +118,7 @@ public class RsController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/rs/event/{id}")
+    @DeleteMapping("/rsEvent/{id}")
     public ResponseEntity deleteRsEvent(@PathVariable int id) {
         if (!rsEventRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();

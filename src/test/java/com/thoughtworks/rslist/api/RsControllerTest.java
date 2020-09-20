@@ -54,7 +54,7 @@ public class RsControllerTest {
         UserEntity user1 = saveOneUserEntity("lee", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent1 = saveOneRsEventEntity("event 1", "key", user1);
 
-        mockMvc.perform(get("/rs/list"))
+        mockMvc.perform(get("/rsEvents"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("event 0")))
@@ -76,7 +76,7 @@ public class RsControllerTest {
         UserEntity user1 = saveOneUserEntity("lee", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent1 = saveOneRsEventEntity("event 1", "key", user1);
 
-        mockMvc.perform(get("/rs/list?start=1&end=2"))
+        mockMvc.perform(get("/rsEvents?start=1&end=2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("event 0")))
@@ -91,7 +91,7 @@ public class RsControllerTest {
 
     @Test
     void should_get_error_by_error_range() throws Exception {
-        mockMvc.perform(get("/rs/list?start=1&end=4"))
+        mockMvc.perform(get("/rsEvents?start=1&end=4"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid request param")));
     }
@@ -100,7 +100,7 @@ public class RsControllerTest {
     void should_get_one_event() throws Exception {
         UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
-        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+        mockMvc.perform(get("/rsEvent/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("event 0")))
                 .andExpect(jsonPath("$.keyWord", is("key")))
                 .andExpect(jsonPath("$.votNum", is(rsEvent.getVoteNum())))
@@ -109,7 +109,7 @@ public class RsControllerTest {
 
     @Test
     void should_get_error_by_error_userid() throws Exception {
-        mockMvc.perform(get("/rs/{id}", 5))
+        mockMvc.perform(get("/rsEvent/{id}", 5))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid index")));
     }
@@ -122,7 +122,7 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/event")
+        mockMvc.perform(post("/rsEvent")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -141,7 +141,7 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/rsEvent").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid param")));
     }
@@ -156,31 +156,19 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/event")
+        mockMvc.perform(post("/rsEvent")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void should_delete_user() throws Exception {
-        UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
-        RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
-
-        mockMvc.perform(delete("/user/event/{id}", user.getId()))
-                .andExpect(status().isNoContent());
-        List<RsEventEntity> rsEvents = rsEventRepository.findAll();
-        List<UserEntity> users = userRepository.findAll();
-        assertEquals(0, users.size());
-        assertEquals(0, rsEvents.size());
-    }
 
     @Test
     public void delet_rsEvent_by_id() throws Exception {
         UserEntity user = saveOneUserEntity("Tadashi", "male", 20, "13308375411", "123@twu.com", 10);
         RsEventEntity rsEvent = saveOneRsEventEntity("event 0", "key", user);
 
-        mockMvc.perform(delete("/rs/event/{id}", rsEvent.getId()))
+        mockMvc.perform(delete("/rsEvent/{id}", rsEvent.getId()))
                 .andExpect(status().isNoContent());
         List<RsEventEntity> rsEvents = rsEventRepository.findAll();
         assertEquals(0,rsEvents.size());
@@ -195,12 +183,12 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
-        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+        mockMvc.perform(patch("/rsEvent/{id}", rsEvent.getId())
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+        mockMvc.perform(get("/rsEvent/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("new event")))
                 .andExpect(jsonPath("$.keyWord", is("new key")));
 
@@ -214,12 +202,12 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
-        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+        mockMvc.perform(patch("/rsEvent/{id}", rsEvent.getId())
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+        mockMvc.perform(get("/rsEvent/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("event 0")))
                 .andExpect(jsonPath("$.keyWord", is("new key")));
 
@@ -234,12 +222,12 @@ public class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEventPatchRequest);
 
-        mockMvc.perform(patch("/rs/event/{id}", rsEvent.getId())
+        mockMvc.perform(patch("/rsEvent/{id}", rsEvent.getId())
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/rs/{id}", rsEvent.getId()))
+        mockMvc.perform(get("/rsEvent/{id}", rsEvent.getId()))
                 .andExpect(jsonPath("$.eventName", is("new event")))
                 .andExpect(jsonPath("$.keyWord", is("key")));
 
