@@ -23,7 +23,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/user/list")
+    @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllRsEvent(@RequestParam(required = false) Integer start
             , @RequestParam(required = false) Integer end) {
 
@@ -64,7 +64,7 @@ public class UserController {
                 .build());
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/user")
     public ResponseEntity register(@Valid @RequestBody UserDto userDto){
 //        userService.getUserDtos().add(userDto);
         UserEntity userEntity = UserEntity.builder()
@@ -79,7 +79,7 @@ public class UserController {
         return ResponseEntity.created(null).build();
     }
 
-    @DeleteMapping("/user/event/{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity deleteUser(@PathVariable int id){
         if (!userRepository.existsById(id)) {
             return ResponseEntity.badRequest().build();
